@@ -4,7 +4,6 @@ import { login, signup } from "./auth.service";
 
 const router = Router();
 
-//  Authentication Endpoints
 router.post(
   "/signup",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -30,9 +29,6 @@ router.post(
     }
   }
 );
-
-//  Authentication Endpoints
-// /auth/logout
 
 // Token Management
 // /auth/refresh

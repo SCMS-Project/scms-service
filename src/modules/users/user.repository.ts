@@ -20,8 +20,6 @@ export const getOneUserByEmail = async (
   try {
     const user = await User.findOne({ email });
 
-    console.log(`successfully retrieved user details: ${JSON.stringify(user)}`);
-
     return user;
   } catch (error: any) {
     console.error(`error when retrieving user: ${email}, error: ${error}`);
