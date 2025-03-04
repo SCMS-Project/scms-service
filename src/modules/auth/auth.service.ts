@@ -1,29 +1,27 @@
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import bcrypt from "bcrypt";
 
 import { createUser, getOneUserByEmail } from "../users/user.repository";
 import { IUser, User } from "../users/models/user.model";
 import { AuthResult, LoginInput } from "./interface/auth.interface";
 import HttpException from "../../util/http-exception.model";
+import { encrypt } from "./encrypt";
+import { UserRole } from "../../util/enums";
 
 dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET || "secret-key";
 
 export const signup = async (registerUser: IUser): Promise<AuthResult> => {
   try {
     const newUser = new User({
       ...registerUser,
-      role: "user",
+      role: UserRole.USER,
     });
     await createUser(newUser);
 
-    const token = jwt.sign(
-      { userId: newUser._id, email: newUser.email, role: newUser.role },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = encrypt.generateToken({
+      userId: newUser._id,
+      email: newUser.email,
+      role: newUser.role,
+    });
 
     return {
       message: "Registration successful",
@@ -58,26 +56,31 @@ export const signup = async (registerUser: IUser): Promise<AuthResult> => {
 
 export const login = async (loginInput: LoginInput): Promise<AuthResult> => {
   try {
-    console.log(loginInput);
     const user: any = await getOneUserByEmail(loginInput.email);
     if (!user) {
-      throw new HttpException(401, { message: "Invalid email or password" });
+      throw new HttpException(401, {
+        message: "Invalid email or password",
+        result: false,
+      });
     }
 
-    console.log(`is match ${loginInput.password}  ${user.password}`);
-
-    const isMatch = await bcrypt.compare(loginInput.password, user.password);
-    if (!isMatch) {
-      throw new HttpException(401, { message: "Invalid email or password" });
-    }
-
-    console.log("sign in");
-
-    const token = jwt.sign(
-      { userId: user._id, email: user.email, role: user.role },
-      JWT_SECRET,
-      { expiresIn: "1h" }
+    const isMatch = await encrypt.verifyPassword(
+      user.password,
+      loginInput.password
     );
+
+    if (!isMatch) {
+      throw new HttpException(401, {
+        message: "Invalid email or password",
+        result: false,
+      });
+    }
+
+    const token = encrypt.generateToken({
+      userId: user._id,
+      email: user.email,
+      role: user.role,
+    });
 
     return {
       message: "Login successful",
@@ -93,9 +96,6 @@ export const login = async (loginInput: LoginInput): Promise<AuthResult> => {
       },
     };
   } catch (error: any) {
-    throw new HttpException(500, {
-      message: "Server error",
-      error: { error },
-    });
+    throw error;
   }
 };
