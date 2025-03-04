@@ -7,6 +7,6 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error(`Error: ${JSON.stringify(error.message)}`);
+  //   console.error(`Error: ${JSON.stringify(error.message.error)}`);
   return res.status(error.errorCode).json(error.message);
 };

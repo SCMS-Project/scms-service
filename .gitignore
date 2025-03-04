@@ -44,3 +44,5 @@ jest-transform-cache/
 
 # Docker
 docker-compose.override.yml
+
+.fake
