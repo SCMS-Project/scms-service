@@ -18,7 +18,7 @@ app.use(cors());
 app.use(routes);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript + Express!");
+  res.send("Hello, Welcome to SCMS!");
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
