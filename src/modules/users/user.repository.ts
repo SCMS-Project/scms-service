@@ -1,5 +1,15 @@
 import { IUser, User } from "./models/user.model";
 
+export const getUsers = async () => {
+  try {
+    const users: IUser[] = await User.find();
+    return users;
+  } catch (error) {
+    console.error(`error in retrieving getUsers error: ${error}`);
+    throw error;
+  }
+};
+
 export const createUser = async (
   createUser: IUser
 ): Promise<IUser | undefined> => {
