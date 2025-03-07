@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 
-import { createUser, getOneUserByEmail } from "../users/user.repository";
+import { createUser, getUserByEmail } from "../users/user.repository";
 import { IUser, User } from "../users/models/user.model";
 import { AuthResult, LoginInput } from "./interface/auth.interface";
 import HttpException from "../../util/http-exception.model";
@@ -56,7 +56,7 @@ export const signup = async (registerUser: IUser): Promise<AuthResult> => {
 
 export const login = async (loginInput: LoginInput): Promise<AuthResult> => {
   try {
-    const user: any = await getOneUserByEmail(loginInput.email);
+    const user: any = await getUserByEmail(loginInput.email);
     if (!user) {
       throw new HttpException(401, {
         message: "Invalid email or password",

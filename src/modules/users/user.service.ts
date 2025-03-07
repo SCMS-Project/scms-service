@@ -1,17 +1,17 @@
-import HttpException from "../../util/http-exception.model";
 import { IUser } from "./models/user.model";
-import { getUsers } from "./user.repository";
+import {
+  deleteUser,
+  getUserById,
+  getUsers,
+  updateUser,
+} from "./user.repository";
+import HttpException from "../../util/http-exception.model";
 
 export const getAllUsers = async () => {
   try {
     const users: IUser[] | null = await getUsers();
 
-    if (users.length === 0) {
-      throw new HttpException(202, {
-        message: "No users found",
-        result: false,
-      });
-    } else if (!users) {
+    if (!users) {
       throw new HttpException(500, {
         message: "Error occurred when retrieving users",
         result: false,
@@ -29,6 +29,74 @@ export const getAllUsers = async () => {
       nicNumber: user.nicNumber,
       address: user.address,
     }));
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const retrieveUserById = async (id: string) => {
+  try {
+    const user: IUser | null = await getUserById(id);
+
+    if (!user) {
+      throw new HttpException(500, {
+        message: "Error occurred when retrieving user by id",
+        result: false,
+      });
+    }
+
+    return {
+      _id: user._id,
+      title: user.title,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      dateOfBirth: user.dateOfBirth,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      nicNumber: user.nicNumber,
+      address: user.address,
+    };
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const updateUserDetails = async (id: string, updateUserData: IUser) => {
+  try {
+    const updatedUser = await updateUser(id, updateUserData);
+    if (!updatedUser) {
+      throw new HttpException(500, {
+        message: `Error updating user with ID: ${id}`,
+        result: false,
+      });
+    }
+    return updatedUser;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const deleteUserById = async (id: string) => {
+  try {
+    const user = await getUserById(id);
+
+    if (user === null) {
+      throw new HttpException(202, {
+        message: `User ID : ${id} does not exist`,
+      });
+    }
+
+    const deletedUser = await deleteUser(id);
+    if (!deletedUser) {
+      throw new HttpException(500, {
+        message: `Error in deleting user ID: ${id}`,
+        result: false,
+      });
+    }
+
+    return {
+      message: `User successfully deleted: ID: ${deletedUser._id}, email: ${deletedUser.email}`,
+    };
   } catch (error: any) {
     throw error;
   }
