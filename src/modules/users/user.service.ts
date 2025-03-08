@@ -25,17 +25,7 @@ export const getAllUsers = async () => {
       });
     }
 
-    return users.map((user) => ({
-      _id: user._id,
-      title: user.title,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      dateOfBirth: user.dateOfBirth,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      nicNumber: user.nicNumber,
-      address: user.address,
-    }));
+    return users;
   } catch (error: any) {
     throw error;
   }
