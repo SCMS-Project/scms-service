@@ -4,6 +4,7 @@ import {
   deleteUserById,
   getAllUsers,
   retrieveUserById,
+  saveStudent,
   updateUserDetails,
 } from "./user.service";
 
@@ -42,6 +43,18 @@ router.delete(
     try {
       const user = await deleteUserById(req.params.id);
       res.status(201).json({ ...user });
+    } catch (error: any) {
+      next(error);
+    }
+  }
+);
+
+router.post(
+  "/student/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const student = await saveStudent(req.params.id, req.body);
+      res.status(201).json(student);
     } catch (error: any) {
       next(error);
     }

@@ -1,11 +1,13 @@
 import { IUser } from "./models/user.model";
 import {
+  createStudent,
   deleteUser,
   getUserById,
   getUsers,
   updateUser,
 } from "./user.repository";
 import HttpException from "../../util/http-exception.model";
+import { IStudent } from "./models/student.model";
 
 export const getAllUsers = async () => {
   try {
@@ -98,6 +100,14 @@ export const deleteUserById = async (id: string) => {
       message: `User successfully deleted: ID: ${deletedUser._id}, email: ${deletedUser.email}`,
     };
   } catch (error: any) {
+    throw error;
+  }
+};
+
+export const saveStudent = async (id: string, newStudent: IStudent) => {
+  try {
+    return await createStudent(id, newStudent);
+  } catch (error) {
     throw error;
   }
 };

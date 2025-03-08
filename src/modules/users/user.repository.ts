@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 
 import { IUser, User } from "./models/user.model";
 import HttpException from "../../util/http-exception.model";
+import { IStudent, Student } from "./models/student.model";
 
 export const getUsers = async () => {
   try {
@@ -77,12 +78,26 @@ export const deleteUser = async (id: string) => {
   try {
     await getUserById(id);
     const deletedUser = await User.findByIdAndDelete(id).lean();
-
     return deletedUser;
   } catch (error) {
     console.error(
       `Error occurred when deleting user ID: ${id}, error: ${error}`
     );
+    throw error;
+  }
+};
+
+export const createStudent = async (id: string, createUser: IStudent) => {
+  try {
+    const newStudent = new Student({
+      user: id,
+      studentId: createUser.studentId,
+      enrollmentDate: createUser.enrollmentDate,
+    });
+
+    return await newStudent.save();
+  } catch (error: any) {
+    console.error(`error creating student userId: ${id}, error: ${error}`);
     throw error;
   }
 };
