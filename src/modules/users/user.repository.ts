@@ -3,6 +3,8 @@ import { Types } from "mongoose";
 import { IUser, User } from "./models/user.model";
 import HttpException from "../../util/http-exception.model";
 import { IStudent, Student } from "./models/student.model";
+import { ILecturer, Lecturer } from "./models/lecturer.model";
+import { UserRole } from "../../util/enums";
 
 export const getUsers = async () => {
   try {
@@ -87,8 +89,10 @@ export const createStudent = async (id: string, createUser: IStudent) => {
     const student = new Student({ ...createUser, user: id });
     await student.save();
 
-    // Update the user with the student reference
-    await User.findByIdAndUpdate(id, { student: student._id, role: "student" });
+    await User.findByIdAndUpdate(id, {
+      student: student._id,
+      role: UserRole.STUDENT,
+    });
 
     return student;
   } catch (error: any) {
@@ -99,17 +103,51 @@ export const createStudent = async (id: string, createUser: IStudent) => {
 
 export const getAllStudents = async () => {
   try {
-    const students = await User.find()
+    const students = await User.find({ role: UserRole.STUDENT })
       .populate({
         path: "student",
-        select: "-user -createdAt -updatedAt",
+        select: "-__v -user -createdAt -updatedAt",
       })
-      .select("-password -createdAt -updatedAt")
+      .select("-__v -password -createdAt -updatedAt")
       .exec();
 
     return students;
   } catch (error) {
     console.error(`error in retrieving all students, error: ${error}`);
+    throw error;
+  }
+};
+
+export const createLecturer = async (id: string, createLecturer: ILecturer) => {
+  try {
+    const lecturer = new Lecturer({ ...createLecturer, user: id });
+    await lecturer.save();
+
+    await User.findByIdAndUpdate(id, {
+      lecturer: lecturer._id,
+      role: UserRole.LECTURER,
+    });
+
+    return lecturer;
+  } catch (error: any) {
+    console.error(`error creating lecturer userId: ${id}, error: ${error}`);
+    throw error;
+  }
+};
+
+export const getAllLecturer = async () => {
+  try {
+    const lecturer = await User.find({ role: UserRole.LECTURER })
+      .populate({
+        path: "lecturer",
+        select: "-__v -user -createdAt -updatedAt",
+      })
+      .select("-__v -password -createdAt -updatedAt")
+      .exec();
+
+    return lecturer;
+  } catch (error) {
+    console.error(`error in retrieving all lecturer, error: ${error}`);
     throw error;
   }
 };

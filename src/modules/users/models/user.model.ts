@@ -15,6 +15,7 @@ const UserSchema = new Schema(
     address: { type: String, required: true },
     role: { type: String },
     student: { type: Schema.Types.ObjectId, ref: "Student" },
+    lecturer: { type: Schema.Types.ObjectId, ref: "Lecturer" },
     password: { type: String },
   },
   { timestamps: true }

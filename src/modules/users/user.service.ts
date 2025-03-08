@@ -1,7 +1,9 @@
 import { IUser } from "./models/user.model";
 import {
+  createLecturer,
   createStudent,
   deleteUser,
+  getAllLecturer,
   getAllStudents,
   getUserById,
   getUsers,
@@ -10,6 +12,7 @@ import {
 } from "./user.repository";
 import HttpException from "../../util/http-exception.model";
 import { IStudent } from "./models/student.model";
+import { ILecturer } from "./models/lecturer.model";
 
 export const getAllUsers = async () => {
   try {
@@ -142,6 +145,47 @@ export const retrieveAllStudents = async () => {
     }
 
     return students;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const saveLecturer = async (id: string, newLecturer: ILecturer) => {
+  try {
+    const validatedUser = await validateUserById(id);
+
+    if (!validatedUser) {
+      throw new HttpException(500, {
+        message: `UserId not found - ID: ${id}`,
+      });
+    }
+
+    const lecturer = await createLecturer(id, newLecturer);
+    if (!lecturer) {
+      throw new HttpException(500, {
+        message: `Error in creating lecturer user ID: ${id}`,
+        result: false,
+      });
+    }
+
+    return lecturer;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const retrieveAllLecturer = async () => {
+  try {
+    const lecturer = await getAllLecturer();
+
+    if (!lecturer) {
+      throw new HttpException(500, {
+        message: "Error occurred when retrieving lecturer",
+        result: false,
+      });
+    }
+
+    return lecturer;
   } catch (error: any) {
     throw error;
   }
