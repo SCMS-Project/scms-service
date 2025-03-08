@@ -16,12 +16,7 @@ export const getUsers = async () => {
 
 export const getUserById = async (id: string): Promise<IUser | null> => {
   try {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new HttpException(202, {
-        message: "Not a valid mongo ID",
-        result: false,
-      });
-    }
+    await validateUserById(id);
 
     const user = await User.findById(id);
     return user;
@@ -62,7 +57,7 @@ export const createUser = async (
 
 export const updateUser = async (id: string, updateUser: IUser) => {
   try {
-    await getUserById(id);
+    await validateUserById(id);
     const updatedUser = await User.findOneAndUpdate(
       { _id: id },
       updateUser
@@ -76,7 +71,7 @@ export const updateUser = async (id: string, updateUser: IUser) => {
 
 export const deleteUser = async (id: string) => {
   try {
-    await getUserById(id);
+    await validateUserById(id);
     const deletedUser = await User.findByIdAndDelete(id).lean();
     return deletedUser;
   } catch (error) {
@@ -98,6 +93,27 @@ export const createStudent = async (id: string, createUser: IStudent) => {
     return await newStudent.save();
   } catch (error: any) {
     console.error(`error creating student userId: ${id}, error: ${error}`);
+    throw error;
+  }
+};
+
+export const validateUserById = async (id: string): Promise<boolean> => {
+  try {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new HttpException(202, {
+        message: "Not a valid mongo ID",
+        result: false,
+      });
+    }
+
+    const userExists = await User.exists({ _id: id });
+    return !!userExists;
+  } catch (error) {
+    console.error(
+      `error in validating userById _id: ${id},  error: ${JSON.stringify(
+        error
+      )}`
+    );
     throw error;
   }
 };

@@ -5,6 +5,7 @@ import {
   getUserById,
   getUsers,
   updateUser,
+  validateUserById,
 } from "./user.repository";
 import HttpException from "../../util/http-exception.model";
 import { IStudent } from "./models/student.model";
@@ -106,7 +107,23 @@ export const deleteUserById = async (id: string) => {
 
 export const saveStudent = async (id: string, newStudent: IStudent) => {
   try {
-    return await createStudent(id, newStudent);
+    const validatedUser = await validateUserById(id);
+
+    if (!validatedUser) {
+      throw new HttpException(500, {
+        message: `UserId not found - ID: ${id}`,
+      });
+    }
+
+    const student = await createStudent(id, newStudent);
+    if (!student) {
+      throw new HttpException(500, {
+        message: `Error in creating student user ID: ${id}`,
+        result: false,
+      });
+    }
+
+    return student;
   } catch (error) {
     throw error;
   }
