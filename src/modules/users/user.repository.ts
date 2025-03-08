@@ -90,7 +90,8 @@ export const deleteUser = async (id: string) => {
 
 export const createStudent = async (id: string, createUser: IStudent) => {
   try {
-    const student = new Student({ ...createUser, user: id });
+    const studentId = await generateId(UserRole.STUDENT);
+    const student = new Student({ ...createUser, studentId, user: id });
     await student.save();
 
     await User.findByIdAndUpdate(id, {
@@ -124,7 +125,8 @@ export const getAllStudents = async () => {
 
 export const createLecturer = async (id: string, createLecturer: ILecturer) => {
   try {
-    const lecturer = new Lecturer({ ...createLecturer, user: id });
+    const lecturerId = await generateId(UserRole.LECTURER);
+    const lecturer = new Lecturer({ ...createLecturer, lecturerId, user: id });
     await lecturer.save();
 
     await User.findByIdAndUpdate(id, {
@@ -174,5 +176,40 @@ export const validateUserById = async (id: string): Promise<boolean> => {
       )}`
     );
     throw error;
+  }
+};
+
+const generateId = async (role: string): Promise<string> => {
+  try {
+    const userIdRegex = /^[SL]-\d{4}$/;
+    let lastRoleId;
+    const firstCode = role === UserRole.STUDENT ? "S" : "L";
+
+    if (role === UserRole.STUDENT) {
+      const lastStudent = await Student.findOne()
+        .sort({ createdAt: -1 })
+        .limit(1);
+
+      lastRoleId = lastStudent?.studentId;
+    } else {
+      const lastLecturer = await Lecturer.findOne()
+        .sort({ createdAt: -1 })
+        .limit(1);
+      lastRoleId = lastLecturer?.lecturerId;
+    }
+
+    if (!lastRoleId || !userIdRegex.test(lastRoleId)) {
+      return `${firstCode}-0001`;
+    }
+
+    const newIdNumber = parseInt(lastRoleId.substring(2), 10) + 1;
+
+    return `${firstCode}-${newIdNumber.toString().padStart(4, "0")}`;
+  } catch (error) {
+    console.error("Error generating ID:", error);
+    throw new HttpException(500, {
+      message: "Error generating ID",
+      result: false,
+    });
   }
 };
