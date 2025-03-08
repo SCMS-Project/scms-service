@@ -16,7 +16,8 @@ import { ILecturer } from "./models/lecturer.model";
 
 export const getAllUsers = async () => {
   try {
-    const users: IUser[] | null = await getUsers();
+    const select = "-password -createdAt -updatedAt -__v";
+    const users: IUser[] | null = await getUsers(select);
 
     if (!users) {
       throw new HttpException(500, {
