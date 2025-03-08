@@ -22,7 +22,9 @@ export const getUserById = async (id: string): Promise<IUser | null> => {
   try {
     await validateUserById(id);
 
-    const user = await User.findById(id);
+    const user = await User.findById(id)
+      .select("-password -createdAt -updatedAt -__v")
+      .exec();
     return user;
   } catch (error) {
     console.error(

@@ -42,17 +42,7 @@ export const retrieveUserById = async (id: string) => {
       });
     }
 
-    return {
-      _id: user._id,
-      title: user.title,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      dateOfBirth: user.dateOfBirth,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      nicNumber: user.nicNumber,
-      address: user.address,
-    };
+    return user;
   } catch (error: any) {
     throw error;
   }
