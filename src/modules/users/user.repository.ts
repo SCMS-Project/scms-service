@@ -6,9 +6,11 @@ import { IStudent, Student } from "./models/student.model";
 import { ILecturer, Lecturer } from "./models/lecturer.model";
 import { UserRole } from "../../util/enums";
 
-export const getUsers = async (select: string) => {
+export const getUsers = async () => {
   try {
-    const users: IUser[] = await User.find().select(select).exec();
+    const users: IUser[] = await User.find()
+      .select("-password -createdAt -updatedAt -__v")
+      .exec();
     return users;
   } catch (error) {
     console.error(`error in retrieving getUsers,  error: ${error}`);

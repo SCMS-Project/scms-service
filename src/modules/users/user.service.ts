@@ -1,4 +1,3 @@
-import { IUser } from "./models/user.model";
 import {
   createLecturer,
   createStudent,
@@ -11,13 +10,13 @@ import {
   validateUserById,
 } from "./user.repository";
 import HttpException from "../../util/http-exception.model";
+import { IUser } from "./models/user.model";
 import { IStudent } from "./models/student.model";
 import { ILecturer } from "./models/lecturer.model";
 
 export const getAllUsers = async () => {
   try {
-    const select = "-password -createdAt -updatedAt -__v";
-    const users: IUser[] | null = await getUsers(select);
+    const users: IUser[] | null = await getUsers();
 
     if (!users) {
       throw new HttpException(500, {
