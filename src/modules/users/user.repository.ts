@@ -84,15 +84,32 @@ export const deleteUser = async (id: string) => {
 
 export const createStudent = async (id: string, createUser: IStudent) => {
   try {
-    const newStudent = new Student({
-      user: id,
-      studentId: createUser.studentId,
-      enrollmentDate: createUser.enrollmentDate,
-    });
+    const student = new Student({ ...createUser, user: id });
+    await student.save();
 
-    return await newStudent.save();
+    // Update the user with the student reference
+    await User.findByIdAndUpdate(id, { student: student._id, role: "student" });
+
+    return student;
   } catch (error: any) {
     console.error(`error creating student userId: ${id}, error: ${error}`);
+    throw error;
+  }
+};
+
+export const getAllStudents = async () => {
+  try {
+    const students = await User.find()
+      .populate({
+        path: "student",
+        select: "-user -createdAt -updatedAt",
+      })
+      .select("-password -createdAt -updatedAt")
+      .exec();
+
+    return students;
+  } catch (error) {
+    console.error(`error in retrieving all students, error: ${error}`);
     throw error;
   }
 };

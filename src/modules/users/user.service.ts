@@ -2,6 +2,7 @@ import { IUser } from "./models/user.model";
 import {
   createStudent,
   deleteUser,
+  getAllStudents,
   getUserById,
   getUsers,
   updateUser,
@@ -125,6 +126,23 @@ export const saveStudent = async (id: string, newStudent: IStudent) => {
 
     return student;
   } catch (error) {
+    throw error;
+  }
+};
+
+export const retrieveAllStudents = async () => {
+  try {
+    const students = await getAllStudents();
+
+    if (!students) {
+      throw new HttpException(500, {
+        message: "Error occurred when retrieving students",
+        result: false,
+      });
+    }
+
+    return students;
+  } catch (error: any) {
     throw error;
   }
 };

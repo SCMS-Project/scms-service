@@ -14,7 +14,7 @@ const UserSchema = new Schema(
     nicNumber: { type: String, required: true },
     address: { type: String, required: true },
     role: { type: String },
-    student: [{ type: Schema.Types.ObjectId, ref: "Student" }],
+    student: { type: Schema.Types.ObjectId, ref: "Student" },
     password: { type: String },
   },
   { timestamps: true }
