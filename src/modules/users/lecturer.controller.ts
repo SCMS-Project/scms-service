@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
+
 import { retrieveAllLecturer, saveLecturer } from "./user.service";
 
 const router = Router();

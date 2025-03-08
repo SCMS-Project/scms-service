@@ -3,7 +3,6 @@ import { Router, Request, Response, NextFunction } from "express";
 import {
   deleteUserById,
   getAllUsers,
-  retrieveAllStudents,
   retrieveUserById,
   updateUserDetails,
 } from "./user.service";

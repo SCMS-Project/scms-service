@@ -111,13 +111,7 @@ export const deleteUserById = async (id: string) => {
 
 export const saveStudent = async (id: string, newStudent: IStudent) => {
   try {
-    const validatedUser = await validateUserById(id);
-
-    if (!validatedUser) {
-      throw new HttpException(500, {
-        message: `UserId not found - ID: ${id}`,
-      });
-    }
+    await validateUser(id);
 
     const student = await createStudent(id, newStudent);
     if (!student) {
@@ -152,13 +146,7 @@ export const retrieveAllStudents = async () => {
 
 export const saveLecturer = async (id: string, newLecturer: ILecturer) => {
   try {
-    const validatedUser = await validateUserById(id);
-
-    if (!validatedUser) {
-      throw new HttpException(500, {
-        message: `UserId not found - ID: ${id}`,
-      });
-    }
+    await validateUser(id);
 
     const lecturer = await createLecturer(id, newLecturer);
     if (!lecturer) {
@@ -188,5 +176,15 @@ export const retrieveAllLecturer = async () => {
     return lecturer;
   } catch (error: any) {
     throw error;
+  }
+};
+
+const validateUser = async (id: string) => {
+  const validatedUser = await validateUserById(id);
+
+  if (!validatedUser) {
+    throw new HttpException(500, {
+      message: `UserId not found - ID: ${id}`,
+    });
   }
 };
