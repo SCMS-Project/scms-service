@@ -22,9 +22,14 @@ export const createCourse = async (
 
 export const getCourseByCourseId = async (courseId: string) => {
   try {
-    const data = await Course.find({ courseId }).select(
-      "-__v -password -createdAt -updatedAt"
-    );
+    const data = await Course.find({ courseId })
+      .select("-__v -password -createdAt -updatedAt")
+      .populate({
+        path: "subjects",
+        select: "-__v -courses -createdAt -updatedAt",
+      })
+      .select("-__v -createdAt -updatedAt")
+      .exec();
 
     return data;
   } catch (error) {
