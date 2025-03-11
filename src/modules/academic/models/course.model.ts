@@ -5,7 +5,7 @@ const CourseSchema = new Schema(
     courseId: { type: String, required: true },
     name: { type: String },
     level: { type: Number },
-    subjects: { type: Schema.Types.ObjectId, ref: "Subject" },
+    subjects: [{ type: Schema.Types.ObjectId, ref: "Subject" }],
   },
   { timestamps: true }
 );
