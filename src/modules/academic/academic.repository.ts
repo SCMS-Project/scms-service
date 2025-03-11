@@ -130,6 +130,17 @@ export const createBatch = async (
   }
 };
 
+export const getAllBatch = async () => {
+  try {
+    const data = await Batch.find().select("-__v -createdAt -updatedAt").exec();
+
+    return data;
+  } catch (error) {
+    console.error(`error in retrieving all batch, error: ${error}`);
+    throw error;
+  }
+};
+
 export const validateCourseById = async (
   courseId: string,
   isMongoId: boolean

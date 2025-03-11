@@ -2,6 +2,7 @@ import {
   createBatch,
   createCourse,
   createSubject,
+  getAllBatch,
   getAllCourses,
   getAllSubjects,
   getCourseByCourseId,
@@ -122,6 +123,23 @@ export const saveBatch = async (newData: IBatch) => {
 
     return result;
   } catch (error) {
+    throw error;
+  }
+};
+
+export const retrieveAllBatch = async () => {
+  try {
+    const result = await getAllBatch();
+
+    if (!result) {
+      throw new HttpException(500, {
+        message: "Error occurred when retrieving batch",
+        result: false,
+      });
+    }
+
+    return result;
+  } catch (error: any) {
     throw error;
   }
 };
