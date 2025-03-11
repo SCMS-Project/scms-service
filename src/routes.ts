@@ -6,6 +6,7 @@ import { studentController } from "./modules/users/student.controller";
 import { lecturerController } from "./modules/users/lecturer.controller";
 import { courseController } from "./modules/academic/course.controller";
 import { subjectController } from "./modules/academic/subject.controller";
+import { batchController } from "./modules/academic/batch.controller";
 
 const routes = Router()
   .use("/auth", authController)
@@ -13,6 +14,7 @@ const routes = Router()
   .use("/students", studentController)
   .use("/lecturers", lecturerController)
   .use("/courses", courseController)
-  .use("/subjects", subjectController);
+  .use("/subjects", subjectController)
+  .use("/batch", batchController);
 
 export default Router().use(routes);

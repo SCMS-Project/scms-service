@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
+
 import { retrieveAllSubjects, saveSubject } from "./academic.service";
 
 const router = Router();

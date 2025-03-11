@@ -1,5 +1,5 @@
-import HttpException from "../../util/http-exception.model";
 import {
+  createBatch,
   createCourse,
   createSubject,
   getAllCourses,
@@ -10,6 +10,8 @@ import {
 } from "./academic.repository";
 import { SubjectInput } from "./interface/subject-input.interface";
 import { ICourse } from "./models/course.model";
+import HttpException from "../../util/http-exception.model";
+import { IBatch } from "./models/batch.model";
 
 export const saveCourse = async (newCourse: ICourse) => {
   try {
@@ -104,6 +106,22 @@ export const retrieveAllSubjects = async () => {
 
     return result;
   } catch (error: any) {
+    throw error;
+  }
+};
+
+export const saveBatch = async (newData: IBatch) => {
+  try {
+    const result = await createBatch(newData);
+    if (!result) {
+      throw new HttpException(500, {
+        message: `Error in batch: ${JSON.stringify(newData)}`,
+        result: false,
+      });
+    }
+
+    return result;
+  } catch (error) {
     throw error;
   }
 };

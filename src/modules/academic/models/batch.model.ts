@@ -2,15 +2,17 @@ import mongoose, { Document, Schema } from "mongoose";
 
 const BatchSchema = new Schema(
   {
-    batchYear: { type: Number, required: true },
-    course: { type: Schema.Types.ObjectId, ref: "Course", required: true }, // M:1 relationship with Course
+    batchId: { type: String, require: true },
+    batchName: { type: String },
+    batchYear: { type: Number },
   },
   { timestamps: true }
 );
 
 export interface IBatch extends Document {
+  batchId: string;
+  batchName: string;
   batchYear: number;
-  course: mongoose.Types.ObjectId;
 }
 
 export const Batch = mongoose.model<IBatch>("Batch", BatchSchema);
