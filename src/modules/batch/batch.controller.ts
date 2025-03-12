@@ -24,7 +24,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post(
-  "/update",
+  "/assign-course",
   async (req: Request, res: Response, next: NextFunction) => {
     console.log("updateBatch: controller hit");
     try {
