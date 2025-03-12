@@ -6,7 +6,7 @@ import { studentController } from "./modules/users/student.controller";
 import { lecturerController } from "./modules/users/lecturer.controller";
 import { courseController } from "./modules/academic/course.controller";
 import { subjectController } from "./modules/academic/subject.controller";
-import { batchController } from "./modules/academic/batch.controller";
+import { batchController } from "./modules/batch/batch.controller";
 
 const routes = Router()
   .use("/auth", authController)

@@ -4,7 +4,7 @@ import { Course, ICourse } from "./models/course.model";
 import { ISubject, Subject } from "./models/subject.model";
 import HttpException from "../../util/http-exception.model";
 import { SubjectInput } from "./interface/subject-input.interface";
-import { Batch, IBatch } from "./models/batch.model";
+import { Batch, IBatch } from "../batch/models/batch.model";
 
 export const createCourse = async (
   createCourse: ICourse
@@ -111,32 +111,6 @@ export const getAllSubjects = async () => {
     return students;
   } catch (error) {
     console.error(`error in retrieving all students, error: ${error}`);
-    throw error;
-  }
-};
-
-export const createBatch = async (
-  createData: IBatch
-): Promise<IBatch | undefined> => {
-  try {
-    const result = new Batch(createData);
-
-    return await result.save();
-  } catch (error: any) {
-    console.error(
-      `error creating batch: ${JSON.stringify(createData)}, error: ${error}`
-    );
-    throw error;
-  }
-};
-
-export const getAllBatch = async () => {
-  try {
-    const data = await Batch.find().select("-__v -createdAt -updatedAt").exec();
-
-    return data;
-  } catch (error) {
-    console.error(`error in retrieving all batch, error: ${error}`);
     throw error;
   }
 };

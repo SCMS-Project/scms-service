@@ -1,6 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-
-import { retrieveAllBatch, saveBatch } from "./academic.service";
+import { retrieveAllBatch, saveBatch } from "./batch.service";
 
 const router = Router();
 
