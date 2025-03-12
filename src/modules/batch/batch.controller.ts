@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { retrieveAllBatch, saveBatch } from "./batch.service";
+import { retrieveAllBatch, saveBatch, updateBatch } from "./batch.service";
 
 const router = Router();
 
@@ -22,5 +22,22 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
+router.post(
+  "/update",
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log("updateBatch: controller hit");
+    try {
+      const result = await updateBatch(req.body);
+      res.status(201).json(result);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+);
+
+// Assign course to batch
+
+// Assign student to batch
 
 export { router as batchController };

@@ -5,7 +5,7 @@ import {
   getAllSubjects,
   getCourseByCourseId,
   updateCourseWithSubject,
-  validateCourseById,
+  validateCoursesById,
 } from "./academic.repository";
 import { SubjectInput } from "./interface/subject-input.interface";
 import { ICourse } from "./models/course.model";
@@ -64,15 +64,16 @@ export const retrieveAllCourses = async () => {
 export const saveSubject = async (newData: SubjectInput) => {
   try {
     if (newData.assignCourses?.length) {
-      await Promise.all(
-        newData.assignCourses.map((courseId) => validateCourse(courseId))
+      newData.assignCourses = await validateCourse(
+        newData.assignCourses,
+        false
       );
     }
 
     const result = await createSubject(newData);
     if (!result) {
       throw new HttpException(500, {
-        message: `Error in subject: ${JSON.stringify(newData)}`,
+        message: `Error in saving subject: ${JSON.stringify(newData)}`,
         result: false,
       });
     }
@@ -108,12 +109,17 @@ export const retrieveAllSubjects = async () => {
   }
 };
 
-const validateCourse = async (id: string) => {
-  const validatedUser = await validateCourseById(id, false);
+export const validateCourse = async (
+  id: string[],
+  isMongo: boolean
+): Promise<string[] | any> => {
+  const validatedUser = await validateCoursesById(id, isMongo);
 
-  if (!validatedUser) {
-    throw new HttpException(500, {
+  if (!validatedUser || validatedUser.length === 0) {
+    throw new HttpException(202, {
       message: `CourseId not found - ID: ${id}`,
     });
   }
+
+  return validatedUser;
 };

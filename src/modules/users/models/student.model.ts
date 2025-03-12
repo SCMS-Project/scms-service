@@ -4,16 +4,14 @@ const StudentSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "User" },
     studentId: { type: String, required: true },
-    enrollmentDate: { type: String, required: true },
-    courseEnrolled: { type: [String] },
+    enrollments: [{ type: Schema.Types.ObjectId, ref: "Enrollment" }],
   },
   { timestamps: true }
 );
 
 export interface IStudent extends Document {
   studentId: string;
-  enrollmentDate: string;
-  courseEnrolled?: string[];
+  enrollments?: string[];
 }
 
 export const Student = mongoose.model<IStudent>("Student", StudentSchema);

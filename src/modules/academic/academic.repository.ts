@@ -77,17 +77,19 @@ export const createSubject = async (
   createData: SubjectInput
 ): Promise<ISubject | undefined> => {
   try {
-    const courseIds = await Course.find({
-      courseId: { $in: createData.assignCourses },
-    }).select("_id");
-
-    const courseObjectIds = courseIds.map((course) => course._id);
-
     const data = new Subject({
       subjectId: createData.subjectId,
       subjectName: createData.subjectName,
-      courses: courseObjectIds,
+      courses: createData.assignCourses,
     });
+
+    for (const course of createData.assignCourses ?? []) {
+      await Course.findOneAndUpdate(
+        { _id: course },
+        { $addToSet: { subjects: data._id } },
+        { new: true, upsert: false }
+      );
+    }
 
     return await data.save();
   } catch (error: any) {
@@ -115,27 +117,39 @@ export const getAllSubjects = async () => {
   }
 };
 
-export const validateCourseById = async (
-  courseId: string,
+export const validateCoursesById = async (
+  courseIds: string[],
   isMongoId: boolean
-): Promise<boolean> => {
+): Promise<string[]> => {
   try {
     if (isMongoId) {
-      if (!Types.ObjectId.isValid(courseId)) {
+      const invalidIds = courseIds.filter((id) => !Types.ObjectId.isValid(id));
+      if (invalidIds.length > 0) {
         throw new HttpException(202, {
-          message: "Not a valid mongo ID",
+          message: `Invalid Mongo ID(s): ${invalidIds.join(", ")}`,
           result: false,
         });
       }
     }
 
-    const courseExists = await Course.exists({ courseId });
-    return !!courseExists;
+    const courses = await Course.find(
+      { courseId: { $in: courseIds } },
+      { _id: 1 }
+    ).lean();
+
+    if (!courses.length) {
+      throw new HttpException(202, {
+        message: "No valid courses found",
+        result: false,
+      });
+    }
+
+    return courses.map((course) => course._id.toString());
   } catch (error) {
     console.error(
-      `error in validating course _id: ${courseId},  error: ${JSON.stringify(
-        error
-      )}`
+      `Error in validating course _ids: ${JSON.stringify(
+        courseIds
+      )}, error: ${JSON.stringify(error)}`
     );
     throw error;
   }
