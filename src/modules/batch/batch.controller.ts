@@ -36,8 +36,6 @@ router.post(
   }
 );
 
-// Assign course to batch
-
 // Assign student to batch
 
 export { router as batchController };

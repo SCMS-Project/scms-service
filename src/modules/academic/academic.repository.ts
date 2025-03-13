@@ -122,26 +122,33 @@ export const validateCoursesById = async (
   isMongoId: boolean
 ): Promise<string[]> => {
   try {
+    let courses;
     if (isMongoId) {
       const invalidIds = courseIds.filter((id) => !Types.ObjectId.isValid(id));
+
       if (invalidIds.length > 0) {
         throw new HttpException(202, {
           message: `Invalid Mongo ID(s): ${invalidIds.join(", ")}`,
           result: false,
         });
       }
-    }
 
-    const courses = await Course.find(
-      { courseId: { $in: courseIds } },
-      { _id: 1 }
-    ).lean();
+      courses = await Course.find(
+        { _id: { $in: courseIds } },
+        { _id: 1 }
+      ).lean();
+    } else {
+      courses = await Course.find(
+        { courseId: { $in: courseIds } },
+        { _id: 1 }
+      ).lean();
 
-    if (!courses.length) {
-      throw new HttpException(202, {
-        message: "No valid courses found",
-        result: false,
-      });
+      if (!courses.length) {
+        throw new HttpException(202, {
+          message: "No valid courses found",
+          result: false,
+        });
+      }
     }
 
     return courses.map((course) => course._id.toString());

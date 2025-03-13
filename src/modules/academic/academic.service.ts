@@ -113,13 +113,13 @@ export const validateCourse = async (
   id: string[],
   isMongo: boolean
 ): Promise<string[] | any> => {
-  const validatedUser = await validateCoursesById(id, isMongo);
+  const validatedData = await validateCoursesById(id, isMongo);
 
-  if (!validatedUser || validatedUser.length === 0) {
+  if (!validatedData || validatedData.length === 0) {
     throw new HttpException(202, {
       message: `CourseId not found - ID: ${id}`,
     });
   }
 
-  return validatedUser;
+  return validatedData;
 };
