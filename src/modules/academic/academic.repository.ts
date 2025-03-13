@@ -73,6 +73,26 @@ export const updateCourseWithSubject = async (
   }
 };
 
+export const removeCourse = async (courseId: string): Promise<void> => {
+  console.log("removeCourse repo hit");
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) {
+      throw new Error(`Subject with ID ${courseId} not found`);
+    }
+
+    await Subject.updateMany(
+      { _id: { $in: course.subjects } },
+      { $pull: { courses: courseId } }
+    );
+
+    await Course.findByIdAndDelete(courseId);
+  } catch (error: any) {
+    console.error(`Error deleting course: ${courseId}, error: ${error}`);
+    throw error;
+  }
+};
+
 export const createSubject = async (
   createData: SubjectInput
 ): Promise<ISubject | undefined> => {

@@ -6,6 +6,7 @@ import {
   getAllCourses,
   getAllSubjects,
   getCourseByCourseId,
+  removeCourse,
   removeSubject,
   updateCourseWithSubject,
   validateCoursesById,
@@ -62,6 +63,20 @@ export const retrieveAllCourses = async () => {
     return result;
   } catch (error: any) {
     throw error;
+  }
+};
+
+export const deleteCourse = async (id: string) => {
+  console.log("deleteCourse service hit");
+  try {
+    const validatedCourseIds = await validateCourse([id], false);
+
+    return await removeCourse(validatedCourseIds?.[0]);
+  } catch (error: any) {
+    throw new HttpException(500, {
+      message: `Error occurred when deleting courseId - ${id} courses`,
+      result: false,
+    });
   }
 };
 
@@ -158,12 +173,9 @@ export const updateSubject = async (newData: SubjectInput) => {
 export const deleteSubject = async (id: string) => {
   console.log("deleteSubject service hit");
   try {
-    let validatedSubjectIds = await validateSubject([id], false);
-    id = validatedSubjectIds?.[0];
+    const validatedSubjectIds = await validateSubject([id], false);
 
-    const result = await removeSubject(id);
-
-    return result;
+    return await removeSubject(validatedSubjectIds?.[0]);
   } catch (error: any) {
     throw new HttpException(500, {
       message: `Error occurred when deleting subjectId - ${id} courses`,

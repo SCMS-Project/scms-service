@@ -4,6 +4,7 @@ const CourseSchema = new Schema(
   {
     courseId: { type: String, required: true },
     name: { type: String },
+    courseDet: { type: String },
     level: { type: Number },
     subjects: [{ type: Schema.Types.ObjectId, ref: "Subject" }],
   },
@@ -13,7 +14,9 @@ const CourseSchema = new Schema(
 export interface ICourse extends Document {
   courseId: string;
   name: string;
+  courseDet: string;
   level?: number;
+  subjects: string[];
 }
 
 export const Course = mongoose.model<ICourse>("Course", CourseSchema);

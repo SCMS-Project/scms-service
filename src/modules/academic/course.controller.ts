@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 
 import {
+  deleteCourse,
   retrieveAllCourses,
   retrieveCourseByCourseId,
   saveCourse,
@@ -40,5 +41,18 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
+router.delete(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log("deleteCourse: controller hit");
+    try {
+      const course = await deleteCourse(req.params.id);
+      res.status(201).json(course);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+);
 
 export { router as courseController };
