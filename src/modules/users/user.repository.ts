@@ -20,7 +20,7 @@ export const getUsers = async () => {
 
 export const getUserById = async (id: string): Promise<IUser | null> => {
   try {
-    await validateUserById(id);
+    await validateUserById([id], true);
 
     const user = await User.findById(id)
       .select("-password -createdAt -updatedAt -__v")
@@ -63,7 +63,7 @@ export const createUser = async (
 
 export const updateUser = async (id: string, updateUser: IUser) => {
   try {
-    await validateUserById(id);
+    await validateUserById([id], true);
     const updatedUser = await User.findOneAndUpdate(
       { _id: id },
       updateUser
@@ -77,7 +77,7 @@ export const updateUser = async (id: string, updateUser: IUser) => {
 
 export const deleteUser = async (id: string) => {
   try {
-    await validateUserById(id);
+    await validateUserById([id], true);
     const deletedUser = await User.findByIdAndDelete(id).lean();
     return deletedUser;
   } catch (error) {
@@ -158,17 +158,36 @@ export const getAllLecturer = async () => {
   }
 };
 
-export const validateUserById = async (id: string): Promise<boolean> => {
+export const validateUserById = async (
+  id: string[],
+  isMongoId: boolean
+): Promise<string[]> => {
   try {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new HttpException(202, {
-        message: "Not a valid mongo ID",
-        result: false,
-      });
+    let users;
+
+    if (isMongoId) {
+      const invalidIds = id.filter((id) => !Types.ObjectId.isValid(id));
+
+      if (invalidIds.length > 0) {
+        throw new HttpException(202, {
+          message: `Invalid Mongo ID(s): ${invalidIds.join(", ")}`,
+          result: false,
+        });
+      }
+
+      users = await User.find({ _id: { $in: id } }, { _id: 1 }).lean();
+    } else {
+      users = await User.find({ _id: { $in: id } }, { _id: 1 }).lean();
+
+      if (!users.length) {
+        throw new HttpException(202, {
+          message: "No valid courses found",
+          result: false,
+        });
+      }
     }
 
-    const userExists = await User.exists({ _id: id });
-    return !!userExists;
+    return users.map((user) => user._id.toString());
   } catch (error) {
     console.error(
       `error in validating userById _id: ${id},  error: ${JSON.stringify(

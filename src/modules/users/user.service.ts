@@ -91,7 +91,7 @@ export const deleteUserById = async (id: string) => {
 
 export const saveStudent = async (id: string, newStudent: IStudent) => {
   try {
-    await validateUser(id);
+    await validateUser([id], false);
 
     const student = await createStudent(id, newStudent);
     if (!student) {
@@ -126,7 +126,7 @@ export const retrieveAllStudents = async () => {
 
 export const saveLecturer = async (id: string, newLecturer: ILecturer) => {
   try {
-    await validateUser(id);
+    await validateUser([id], false);
 
     const lecturer = await createLecturer(id, newLecturer);
     if (!lecturer) {
@@ -159,12 +159,17 @@ export const retrieveAllLecturer = async () => {
   }
 };
 
-const validateUser = async (id: string) => {
-  const validatedUser = await validateUserById(id);
+const validateUser = async (
+  id: string[],
+  isMongo: boolean
+): Promise<string[] | any> => {
+  const validatedData = await validateUserById(id, isMongo);
 
-  if (!validatedUser) {
-    throw new HttpException(500, {
+  if (!validatedData || validatedData.length === 0) {
+    throw new HttpException(202, {
       message: `UserId not found - ID: ${id}`,
     });
   }
+
+  return validatedData;
 };
