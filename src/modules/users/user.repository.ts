@@ -64,10 +64,19 @@ export const createUser = async (
 export const updateUser = async (id: string, updateUser: IUser) => {
   try {
     await validateUserById([id], true);
+
     const updatedUser = await User.findOneAndUpdate(
       { _id: id },
-      updateUser
-    ).lean();
+      { $set: updateUser },
+      { new: true }
+    )
+      .lean()
+      .select("-password -createdAt -updatedAt -__v")
+      .exec();
+    if (!updatedUser) {
+      throw new Error(`User with ID ${id} not found.`);
+    }
+
     return updatedUser;
   } catch (error) {
     console.error(`Error updating user with ID: ${id}, error: ${error}`);
