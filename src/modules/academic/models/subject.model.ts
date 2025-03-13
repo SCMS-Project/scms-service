@@ -12,6 +12,7 @@ const SubjectSchema = new Schema(
 export interface ISubject extends Document {
   subjectId: string;
   subjectName: string;
+  courses: string[];
 }
 
 export const Subject = mongoose.model<ISubject>("Subject", SubjectSchema);
